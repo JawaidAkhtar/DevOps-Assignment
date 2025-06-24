@@ -1,0 +1,12 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars.json
+*.backup
+
+# Node / Python
+node_modules/
+venv/
+__pycache__/
+.env*
