@@ -1,125 +1,170 @@
-# DevOps Assignment
+# 🚀 DevOps Assignment — Full Stack Application Deployment on AWS ECS Fargate
 
-This project consists of a FastAPI backend and a Next.js frontend that communicates with the backend.
+This project is a monorepo containing a containerized backend and frontend application deployed using AWS ECS Fargate. CI/CD is implemented with GitHub Actions, infrastructure is provisioned using Terraform, and monitoring/alerting is configured via CloudWatch.
 
-## Project Structure
 
-```
-.
-├── backend/               # FastAPI backend
+## 📁 Project Structure
+
+---
+DevOps-Assignment/
+├── backend/              # FastAPI backend with Docker and unit tests
 │   ├── app/
-│   │   └── main.py       # Main FastAPI application
-│   └── requirements.txt    # Python dependencies
-└── frontend/              # Next.js frontend
-    ├── pages/
-    │   └── index.js     # Main page
-    ├── public/            # Static files
-    └── package.json       # Node.js dependencies
+│   ├── tests/
+│   └── Dockerfile
+│
+├── frontend/             # Next.js frontend with Docker and E2E tests
+│   ├── pages/
+│   ├── __tests__/
+│   └── Dockerfile
+│
+├── terraform/            # Terraform configs to provision AWS ECS, VPC, ALB, IAM
+│   ├── main.tf
+│   ├── variables.tf
+│   └── ...
+│
+└── .github/
+    └── workflows/        # GitHub Actions CI/CD pipelines for dev and main branches
+        ├── ci.yml
+        └── cd.yml
+
+
+---
+
+## 🛠️ Technologies Used
+
+- **Frontend**: Next.js
+- **Backend**: FastAPI (Python)
+- **Infrastructure**: Terraform
+- **Containerization**: Docker
+- **CI/CD**: GitHub Actions
+- **Cloud Provider**: AWS (ECS Fargate, ALB, ECR, CloudWatch)
+- **Monitoring & Alerting**: CloudWatch + SNS
+
+---
+
+## ⚙️ Branching Strategy
+
+- `main`: Production-ready code (triggers **CD**)
+- `develop`: Development-ready code (triggers **CI**)
+- `feature/*`: Feature-specific branches
+- All code changes go through **pull requests** → merged to `develop` or `main` after review
+
+---
+
+## 🧪 Testing
+
+### Backend (FastAPI)
+- Unit tests using **pytest**
+- `/api/health` and `/api/message` endpoints
+- Dockerized app and test execution
+
+### Frontend (Next.js)
+- E2E tests using **Jest + React Testing Library**
+- Calls backend API dynamically using `NEXT_PUBLIC_API_URL`
+
+---
+
+## 🐳 Dockerization
+
+### Backend
+- Multi-stage Dockerfile
+- Image built and pushed to ECR via CI pipeline
+
+### Frontend
+- Production-ready Dockerfile for Next.js app
+- Also built and pushed via CI
+
+---
+
+## 🔁 CI/CD Pipeline
+
+### On Push to `develop`
+- Runs backend + frontend tests
+- Builds Docker images
+- Tags with Git SHA
+- Pushes to AWS ECR
+
+### On Merge to `main`
+- Triggers ECS service update (CD) to deploy latest images
+
+---
+
+## 🌐 Infrastructure Details (Terraform)
+
+Provisioned using IaC:
+- VPC, Subnets, Route Tables
+- ALB (Application Load Balancer) with 2 target groups:
+  - `/api/*` → backend
+  - `/*` → frontend
+- ECS Cluster (Fargate launch type)
+- Task definitions for frontend & backend
+- IAM roles with least privilege
+- Security groups for ECS + ALB
+
+---
+
+## 📊 Monitoring & Alerting (CloudWatch)
+
+- Container Insights enabled for ECS Fargate
+- CloudWatch Dashboard showing:
+  - CPU & memory usage
+  - Request counts via ALB
+- Alarm:
+  - Triggered if **CPU > 70% for 5 minutes**
+  - Sends notification via **SNS email**
+
+---
+
+## 🔐 Secrets & IAM
+
+- Credentials managed securely via **GitHub Secrets**
+- IAM roles follow **least privilege** principle
+- No use of AWS Secrets Manager (by design choice)
+
+---
+
+## 🌐 Accessing the Application
+
+Once deployed:
+- **Frontend**: `http://devops-alb-1451775341.us-east-1.elb.amazonaws.com`
+- **Backend Api Message**: `http://devops-alb-1451775341.us-east-1.elb.amazonaws.com/api/message`
+
+---
+
+## 📝 Setup Instructions
+
+### 🧪 Run Locally
+
+#### Backend
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+````
+
+#### Frontend
+
+```bash
+cd frontend
+cp .env.local.example .env.local
+# Set backend API URL
+npm install
+npm run dev
 ```
 
-## Prerequisites
+### ☁️ Deploy Infrastructure (Terraform)
 
-- Python 3.8+
-- Node.js 16+
-- npm or yarn
-
-## Backend Setup
-
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Create a virtual environment (recommended):
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: .\venv\Scripts\activate
-   ```
-
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Run the FastAPI server:
-   ```bash
-   uvicorn app.main:app --reload --port 8000
-   ```
-
-   The backend will be available at `http://localhost:8000`
-
-## Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   yarn
-   ```
-
-3. Configure the backend URL (if different from default):
-   - Open `.env.local`
-   - Update `NEXT_PUBLIC_API_URL` with your backend URL
-   - Example: `NEXT_PUBLIC_API_URL=https://your-backend-url.com`
-
-4. Run the development server:
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-   The frontend will be available at `http://localhost:3000`
-
-## Changing the Backend URL
-
-To change the backend URL that the frontend connects to:
-
-1. Open the `.env.local` file in the frontend directory
-2. Update the `NEXT_PUBLIC_API_URL` variable with your new backend URL
-3. Save the file
-4. Restart the Next.js development server for changes to take effect
-
-Example:
-```
-NEXT_PUBLIC_API_URL=https://your-new-backend-url.com
+```bash
+cd terraform
+terraform init
+terraform apply
 ```
 
-## For deployment:
-   ```bash
-   npm run build
-   # or
-   yarn build
-   ```
+## 👤 Author
 
-   AND
+**Jawaid Akhtar**
+📧 [LinkedIn](https://linkedin.com/in/jawaid-akhtar)
+🐙 [GitHub](https://github.com/JawaidAkhtar)
 
-   ```bash
-   npm run start
-   # or
-   yarn start
-   ```
-
-   The frontend will be available at `http://localhost:3000`
-
-## Testing the Integration
-
-1. Ensure both backend and frontend servers are running
-2. Open the frontend in your browser (default: http://localhost:3000)
-3. If everything is working correctly, you should see:
-   - A status message indicating the backend is connected
-   - The message from the backend: "You've successfully integrated the backend!"
-   - The current backend URL being used
-
-## API Endpoints
-
-- `GET /api/health`: Health check endpoint
-  - Returns: `{"status": "healthy", "message": "Backend is running successfully"}`
-
-- `GET /api/message`: Get the integration message
-  - Returns: `{"message": "You've successfully integrated the backend!"}`
