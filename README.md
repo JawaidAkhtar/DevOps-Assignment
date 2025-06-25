@@ -2,30 +2,38 @@
 
 This project is a monorepo containing a containerized backend and frontend application deployed using AWS ECS Fargate. CI/CD is implemented with GitHub Actions, infrastructure is provisioned using Terraform, and monitoring/alerting is configured via CloudWatch.
 
+# 📁 Project Structure
 
-## 📁 Project Structure
-
----
+```text
 DevOps-Assignment/
-├── backend/              # FastAPI backend with Docker and unit tests
-│   ├── app/
-│   ├── tests/
-│   └── Dockerfile
+├── backend/                   # FastAPI backend service
+│   ├── app/                   # Main application code
+│   │   └── main.py            # API endpoints
+│   ├── tests/                 # Unit tests
+│   │   └── test_main.py
+│   ├── Dockerfile             # Multi-stage Docker build
+│   └── requirements.txt       # Python dependencies
 │
-├── frontend/             # Next.js frontend with Docker and E2E tests
-│   ├── pages/
-│   ├── __tests__/
-│   └── Dockerfile
+├── frontend/                  # Next.js frontend application
+│   ├── pages/                 # UI pages
+│   │   └── index.js
+│   ├── __tests__/             # E2E tests
+│   │   └── index.test.js
+│   ├── Dockerfile             # Frontend Docker build
+│   ├── package.json           # Node.js dependencies
+│   └── .env.local             # Environment config
 │
-├── terraform/            # Terraform configs to provision AWS ECS, VPC, ALB, IAM
-│   ├── main.tf
-│   ├── variables.tf
-│   └── ...
+├── terraform/                 # Infrastructure as Code
+│   ├── main.tf                # Main Terraform config
+│   ├── variables.tf           # Input variables
+│   ├── outputs.tf             # Output values
+│   └── terraform.tfvars       # Actual values for variables
+│   
 │
 └── .github/
-    └── workflows/        # GitHub Actions CI/CD pipelines for dev and main branches
-        ├── ci.yml
-        └── cd.yml
+    └── workflows/             # CI/CD pipelines
+        ├── ci.yml             # CI: tests & build on develop
+        └── cd.yml             # CD: deploy on main
 
 
 ---
