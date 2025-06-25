@@ -38,72 +38,72 @@ DevOps-Assignment/
 
 ---
 
-## 🛠️ Technologies Used
+🛠️ Technologies Used
 
-- **Frontend**: Next.js
-- **Backend**: FastAPI (Python)
-- **Infrastructure**: Terraform
-- **Containerization**: Docker
-- **CI/CD**: GitHub Actions
-- **Cloud Provider**: AWS (ECS Fargate, ALB, ECR, CloudWatch)
-- **Monitoring & Alerting**: CloudWatch + SNS
+- Frontend: Next.js
+- Backend: FastAPI (Python)
+- Infrastructure: Terraform
+- Containerization: Docker
+- CI/CD: GitHub Actions
+- Cloud Provider: AWS (ECS Fargate, ALB, ECR, CloudWatch)
+- Monitoring & Alerting: CloudWatch + SNS
 
 ---
 
-## ⚙️ Branching Strategy
+⚙️ Branching Strategy
 
-- `main`: Production-ready code (triggers **CD**)
-- `develop`: Development-ready code (triggers **CI**)
-- `feature/*`: Feature-specific branches
+- main: Production-ready code (triggers **CD**)
+- develop: Development-ready code (triggers **CI**)
+- feature/*: Feature-specific branches
 - All code changes go through **pull requests** → merged to `develop` or `main` after review
 
 ---
 
-## 🧪 Testing
+🧪 Testing
 
-### Backend (FastAPI)
+Backend (FastAPI)
 - Unit tests using **pytest**
-- `/api/health` and `/api/message` endpoints
+- /api/health and /api/message endpoints
 - Dockerized app and test execution
 
-### Frontend (Next.js)
+Frontend (Next.js)
 - E2E tests using **Jest + React Testing Library**
-- Calls backend API dynamically using `NEXT_PUBLIC_API_URL`
+- Calls backend API dynamically using NEXT_PUBLIC_API_URL
 
 ---
 
-## 🐳 Dockerization
+🐳 Dockerization
 
-### Backend
+Backend
 - Multi-stage Dockerfile
 - Image built and pushed to ECR via CI pipeline
 
-### Frontend
+Frontend
 - Production-ready Dockerfile for Next.js app
 - Also built and pushed via CI
 
 ---
 
-## 🔁 CI/CD Pipeline
+🔁 CI/CD Pipeline
 
-### On Push to `develop`
+On Push to develop
 - Runs backend + frontend tests
 - Builds Docker images
 - Tags with Git SHA
 - Pushes to AWS ECR
 
-### On Merge to `main`
+On Merge to main
 - Triggers ECS service update (CD) to deploy latest images
 
 ---
 
-## 🌐 Infrastructure Details (Terraform)
+🌐 Infrastructure Details (Terraform)
 
 Provisioned using IaC:
 - VPC, Subnets, Route Tables
 - ALB (Application Load Balancer) with 2 target groups:
-  - `/api/*` → backend
-  - `/*` → frontend
+  - /api/* → backend
+  - /* → frontend
 - ECS Cluster (Fargate launch type)
 - Task definitions for frontend & backend
 - IAM roles with least privilege
@@ -111,7 +111,7 @@ Provisioned using IaC:
 
 ---
 
-## 📊 Monitoring & Alerting (CloudWatch)
+📊 Monitoring & Alerting (CloudWatch)
 
 - Container Insights enabled for ECS Fargate
 - CloudWatch Dashboard showing:
@@ -123,7 +123,7 @@ Provisioned using IaC:
 
 ---
 
-## 🔐 Secrets & IAM
+🔐 Secrets & IAM
 
 - Credentials managed securely via **GitHub Secrets**
 - IAM roles follow **least privilege** principle
@@ -131,17 +131,17 @@ Provisioned using IaC:
 
 ---
 
-## 🌐 Accessing the Application
+🌐 Accessing the Application
 
 Once deployed:
-- **Frontend**: `http://devops-alb-1451775341.us-east-1.elb.amazonaws.com`
-- **Backend Api Message**: `http://devops-alb-1451775341.us-east-1.elb.amazonaws.com/api/message`
+- Frontend: http://devops-alb-1451775341.us-east-1.elb.amazonaws.com
+- Backend Api Message: http://devops-alb-1451775341.us-east-1.elb.amazonaws.com/api/message
 
 ---
 
-## 📝 Setup Instructions
+📝 Setup Instructions
 
-### 🧪 Run Locally
+🧪 Run Locally
 
 #### Backend
 ```bash
